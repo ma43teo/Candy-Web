@@ -1,0 +1,127 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+  }
+  ion-list{
+    background-color: #F5F6F7;
+  }
+    
+    ion-item {
+      border-radius: 20px;
+      height: 55px;
+      width: 350px;
+      box-shadow: 1px 8px 0px #00000014;
+      --highlinght-heigh:0px;
+      margin-bottom: 10px;
+      color: #FF82FA;
+      border: 2px solid #FF82FA;
+    }
+  
+    ion-input{
+      font-size: 18px;
+      --padding-top: 20px;
+      --padding-bottom:15px;
+      --padding-start:15px;
+    }
+    .ion-padding{
+      justify-content: center;
+    }
+  
+    h1,a{
+      color: #DB49B2;
+      font-family: "Anton", sans-serif;
+   
+  }
+  h2{
+    color: #818181;
+    text-align: center;
+  }
+  .Milk1 {
+    position: absolute;
+    width: 200px;
+    height: 300px;
+    top: 15%;
+    left: 0;
+  }
+  
+  .Milk3 {
+    position: absolute;
+    width: 200px;
+    height: 300px;
+    top: 35%;
+    left: 0;
+    transform: rotate(25deg);
+    
+  }
+  
+  .Milk2 {
+    position: absolute;
+    width: 200px;
+    height: 300px;
+    top: 30%;
+    left: 0;
+  }
+  
+    .Pulparindo{
+      position: absolute;
+      height: 200px;
+      top: 77%;
+      left: 0;
+      
+      }
+      .Pulparindos{
+        position: absolute;
+        height: 200px;
+        top: 77%;
+        left: 0;
+        
+        }
+        .Gomitas{
+          position: absolute;
+          width: 200px;
+          height: 300px;
+          top: 15%;
+          left: auto;
+          right: 0;
+
+          }
+          .Gomitas2{
+            position: absolute;
+            width: 200px;
+            height: 250px;
+            top: 35%;
+            left:auto;
+            right: 0;
+
+          }
+
+              .Skis{
+                position: absolute;
+                top: 66%;
+                right: 0;
+
+}
+  
+  .Guardar{
+  background-color: #FF82FA;
+  border-bottom: #FF82FA;
+  border-radius: 50%;
+  }
+
+  ion-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: #F5F6F7F8;
+    border-radius: 10%;
+    height: 500px;
+  }

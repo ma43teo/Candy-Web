@@ -1,0 +1,184 @@
+.Logo{
+  width: 150px;
+
+  }
+  
+  .header1{
+  background-color: #FF82FA;
+  }
+  
+  .contenedor{
+    background-color: antiquewhite;
+  }
+  
+  .BotonesH{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 0px;
+    margin: 0%;
+
+
+  }
+  .separacion {
+    margin-right: 150px; 
+  }
+
+  .mini-icon{
+    color: #ff002b;
+  }
+  .custom-searchbar {
+    
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    width: 500px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 5px;
+    box-shadow: 0px 0px 5px #ff00ff;
+   
+
+  }
+  
+  .search-input {
+    flex-grow: 1;
+    border: none;
+    border-radius: 20px;
+    padding: 10px;
+    font-size: 16px;
+    color: #999999;
+  }
+  
+  .search-icon {
+    background-color: #ff00ff;
+    
+    border: none;
+    border-radius: 20px;
+    padding: 10px;
+    margin-left: 5px;
+    cursor: pointer;
+  }
+  
+  .search-icon ion-icon {
+    color:#ffffff;
+}
+
+.menu{
+width: 50px;
+height: 50px;
+margin-right:150px;
+}
+.small-card {
+  margin-bottom: 100px;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+.small-card img {
+  max-width: 80%;
+  max-height: 80%;
+}
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+
+.Detalle{
+font-size:7px;
+justify-content: center;
+align-items:center;
+margin-left:10%;
+margin-right: 10%;
+margin-top: -10%;
+}
+.small-card {
+margin-bottom: 100px;
+margin-right: 5px;
+margin-left: 5px;
+}
+.Letras{
+font-size:10px;
+justify-content: center;
+align-items:center;
+}
+.editar-fab {
+--ion-color-primary: #12A1E0;
+height: 34px;
+width: 40px;
+left:90%;
+}
+
+.footer-content {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 0 16px;
+background-color: #40231B;
+margin-top: 500px;
+}
+
+.footer-left {
+display: flex;
+align-items: center;
+}
+
+.increment-button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.increment-button:hover {
+  background-color: #0056b3;
+}
+
+
+.footer-logo {
+width: 150px;
+height: 150px;
+}
+
+.footer-right {
+display: flex;
+align-items: center;
+}
+
+.social-icon {
+font-size: 24px;
+margin-left: 8px;
+color: white;
+width: 50px;
+height: 40px;
+}
+
+.contact-text {
+color: white;
+margin-right: 8px;
+font-size:20px;
+}
+
+
+
+
+.tamañoimg {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.Eliminar{
+  color: #d20606;
+  cursor: pointer;
+}
+
+
+@media screen and (max-width:480px){}
