@@ -1,0 +1,56 @@
+.header{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    background-color: #FF82FA;
+}
+
+.icon{
+    position: absolute;
+    top: 50px;
+    width: 100%;
+    height: 100px;
+}
+
+.icon img{
+    width: 88px;
+    position: relative;
+    top: -3px;
+}
+
+.icon h1{
+    font-size: 50px;
+    position: relative;
+    top: -105%;
+    left: 43%;
+}
+
+///Estilo de las tablas
+      
+ table { border-collapse: collapse; 
+    margin: 25px 0; font-size: 1em; 
+    font-family: sans-serif; 
+    min-width: 800px; 
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); 
+    margin-top: 100px;
+    position: relative;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  tbody tr:last-of-type { border-right: 2px solid #ffffff;}
+
+  thead tr { background-color: #980081; color: #ffffff; text-align: middle; }
+
+  th, td { padding: 12px 15px; 
+    text-align: middle;
+  }
+
+  td{
+    border-right: 1px solid #000000;
+  }
+
+  tbody tr { border-bottom: 1px solid #dddddd; } 
+  tbody tr:nth-of-type(even) { background-color: #f3f3f3; } 
+
+  ///Termina el estilo de las tablas

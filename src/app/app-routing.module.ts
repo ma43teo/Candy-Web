@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { ReportdayComponent } from './reportday/reportday.component';
+import { ReportweekComponent } from './reportweek/reportweek.component';
+import { ReportmonthComponent } from './reportmonth/reportmonth.component';
+
 
 const routes: Routes = [
   {
@@ -47,6 +51,26 @@ const routes: Routes = [
     path: 'detalle-producto-modal',
     loadChildren: () => import('./detalle-producto-modal/detalle-producto-modal.module').then( m => m.DetalleProductoModalPageModule)
   },
+  {
+    path: 'reportedia',
+    component: ReportdayComponent
+  },
+  {
+    path: 'reportesemana',
+    component: ReportweekComponent
+  },
+  {
+    path: 'reportemes',
+    component: ReportmonthComponent
+  },
+  {
+    path: 'ofertas',
+    loadChildren: () => import('./ofertas/ofertas.module').then( m => m.OfertasPageModule)
+  },
+  {
+    path: 'carrito',
+    loadChildren: () => import('./carrito/carrito.module').then( m => m.CarritoPageModule)
+  },
   
 ];
 
@@ -54,6 +78,14 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
-  exports: [RouterModule]
+  declarations: [
+    // Otros componentes declarados anteriormente
+    ReportdayComponent,
+    ReportweekComponent,
+    ReportmonthComponent
+  ],
+  exports: [RouterModule, ReportdayComponent,  ReportweekComponent,
+    ReportmonthComponent]
+  
 })
 export class AppRoutingModule { }

@@ -2,17 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { NuevoProductoModalPage } from '../nuevo-producto-modal/nuevo-producto-modal.page';
 import { EditarPrecioModalPage } from '../editar-precio-modal/editar-precio-modal.page';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { AngularFirestore, AngularFirestoreCollection, QuerySnapshot } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { ToastController } from '@ionic/angular';
 import { DetalleProductoModalPage } from '../detalle-producto-modal/detalle-producto-modal.page';
 import {  AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
-
-
-
-
-
+import { map } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
+import { ProductoOferta } from '../ofertas/ofertas.page';
+import { concat } from 'rxjs';
 
 interface Producto {
   id: string;
@@ -26,6 +25,16 @@ interface Producto {
   mostrarDetalle: boolean;
 }
 
+interface Usuario {
+  id: string;
+  nombre: string;
+  apellido: string;
+  correo: string;
+  telefono: string;
+}
+
+
+
 @Component({
   selector: 'app-home-admin',
   templateUrl: './home-admin.page.html',
@@ -35,8 +44,17 @@ export class HomeAdminPage implements OnInit {
   categorias: string[] = [];
   categoriaSeleccionada: string = 'categorias';
   productosCollection!: AngularFirestoreCollection<Producto>;
+  resultados!: Producto[];
   productos$!: Observable<Producto[]>;
   productos!: Producto[];
+  searchQuery: string = '';
+  usuariosCollection!: AngularFirestoreCollection<Usuario>;
+  usuarios$!: Observable<Usuario[]>;
+ 
+
+  productosOfertasCollection?: AngularFirestoreCollection<ProductoOferta>;
+  productosOfertas$?: Observable<ProductoOferta[]>;
+
    // Propiedad para almacenar los productos
 
   imagenNoDisponible(event: any) {
@@ -53,6 +71,8 @@ export class HomeAdminPage implements OnInit {
     private router: Router
   ) {}
 
+
+
   async openModal() {
     const modal = await this.modalController.create({
       component: NuevoProductoModalPage,
@@ -61,43 +81,39 @@ export class HomeAdminPage implements OnInit {
 
     return await modal.present();
   }
+  ofertas(){
+    this.router.navigate(['/ofertas']); 
+  }
 
 
+  
   ngOnInit() {
     this.productosCollection = this.firestore.collection<Producto>('productos');
     this.productos$ = this.productosCollection.valueChanges();
+  
+    this.productosOfertasCollection = this.firestore.collection<ProductoOferta>('ofertas');
+    this.productosOfertas$ = this.productosOfertasCollection.valueChanges();
+  
+    const ofertasCollection = this.firestore.collection<Producto>('productos', ref => ref.where('categoria', '==', 'ofertas'));
+    const ofertas$ = ofertasCollection.valueChanges();
+  
+    this.productos$ = concat(this.productos$, ofertas$);
+  
     this.productos$.subscribe(productos => {
       this.productos = productos; // Asignar productos a la propiedad
       console.log(this.productos); // Verifica que los productos se hayan asignado correctamente
-
+  
       this.productos.forEach(producto => {
         if (!this.categorias.includes(producto.categoria)) {
           this.categorias.push(producto.categoria);
         }
       });
     });
+  
+    this.usuariosCollection = this.firestore.collection<Usuario>('usuarios');
+    this.usuarios$ = this.usuariosCollection.valueChanges();
   }
-
-  async agregarAlCarrito(producto: any) {
-    if (producto.cantidad > 0) {
-      // Restar la cantidad del producto
-      producto.cantidad--;
-
-      // Actualizar el contador en el botón
-      const contadorButton = document.getElementById(`contador-${producto.id}`);
-      if (contadorButton) {
-        contadorButton.innerHTML = producto.cantidad.toString();
-      }
-
-      // Mostrar un mensaje emergente
-      const toast = await this.toastController.create({
-        message: 'Producto agregado al carrito',
-        duration: 2000,
-        position: 'bottom',
-      });
-      toast.present();
-    }
-  }
+  
 
   async mostrarDetalle(producto: any) {
     const modal = await this.modalController.create({
@@ -108,14 +124,14 @@ export class HomeAdminPage implements OnInit {
     });
     return await modal.present();
   }
-  async editarProducto(producto: Producto) {
+  async editarProducto(producto: Producto | ProductoOferta) {
     const modal = await this.modalController.create({
       component: EditarPrecioModalPage,
       componentProps: {
         producto: producto
       }
     });
-  
+
     modal.onDidDismiss().then(data => {
       if (data && data.data && data.data.success) {
         // Actualiza la vista o realiza alguna acción después de guardar los cambios
@@ -125,9 +141,10 @@ export class HomeAdminPage implements OnInit {
         console.log('Edición cancelada');
       }
     });
-  
+
     return await modal.present();
   }
+  
   
   async eliminarProducto(nombre: string) {
     const alert = await this.alertController.create({
@@ -202,6 +219,47 @@ export class HomeAdminPage implements OnInit {
     await alert.present();
   }
 
+  async eliminarProductoOferta(nombre: string) {
+    const alert = await this.alertController.create({
+      header: 'Confirmar eliminación',
+      message: '¿Estás seguro de que deseas eliminar esta oferta?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          handler: async () => {
+            // Realizar la eliminación de la oferta
+            try {
+              const productosOfertasRef = this.firestore.collection('ofertas', ref => ref.where('nombre', '==', nombre));
+              const productosOfertasSnapshot = await productosOfertasRef.get().toPromise();
+              if (productosOfertasSnapshot && !productosOfertasSnapshot.empty) {
+                // Obtener el ID del primer documento coincidente
+                const productoOfertaId = productosOfertasSnapshot.docs[0].id;
+                await this.firestore.collection('ofertas').doc(productoOfertaId).delete();
+                // Mostrar mensaje de éxito
+                const toast = await this.toastController.create({
+                  message: 'Oferta eliminada correctamente',
+                  duration: 2000,
+                  position: 'bottom'
+                });
+                toast.present();
+              } else {
+                console.error('No se encontró ninguna oferta con el nombre especificado');
+              }
+            } catch (error) {
+              // Manejar el error en caso de que la eliminación falle
+              console.error('Error al eliminar la oferta:', error);
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
   incrementarPorcentaje(porcentaje: number) {
     this.productosCollection.ref.where('categoria', '==', this.categoriaSeleccionada)
       .get()
@@ -249,4 +307,30 @@ export class HomeAdminPage implements OnInit {
         console.error('Error al incrementar el precio:', error);
       });
   }
+  buscar() {
+    if (this.searchQuery.trim() !== '') {
+      this.productos$ = this.productosCollection.valueChanges().pipe(
+        map((productos: Producto[]) => productos.filter((producto: Producto) => producto.nombre.includes(this.searchQuery)))
+      );
+      this.usuarios$ = this.firestore.collection<Usuario>('usuarios', ref =>
+        ref.where('nombre', '>=', this.searchQuery)
+          .where('nombre', '<=', this.searchQuery + '\uf8ff')
+      ).valueChanges();
+    } else {
+      if (this.categoriaSeleccionada === 'categorias') {
+        this.productos$ = this.productosCollection.valueChanges().pipe(
+          tap(() => this.categoriaSeleccionada = 'categorias')
+        );
+      } else {
+        this.productos$ = this.productosCollection.valueChanges().pipe(
+          map((productos: Producto[]) => productos.filter((producto: Producto) => producto.categoria === this.categoriaSeleccionada)),
+          tap(() => this.categoriaSeleccionada = 'categorias')
+        );
+      }
+      this.usuarios$ = this.firestore.collection<Usuario>('usuarios').valueChanges();
+    }
+  }
+  
+  
 }  
+  

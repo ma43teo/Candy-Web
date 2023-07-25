@@ -3,6 +3,8 @@ import { ModalController } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { finalize } from 'rxjs/operators';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-nuevo-producto-modal',
@@ -21,7 +23,8 @@ export class NuevoProductoModalPage {
   constructor(
     private modalController: ModalController,
     private firestore: AngularFirestore,
-    private storage: AngularFireStorage
+    private storage: AngularFireStorage,
+    private router: Router
   ) {}
 
   closeModal() {
@@ -37,49 +40,97 @@ export class NuevoProductoModalPage {
       categoria: this.categoria || '',
       cantidad: this.cantidad || 0
     };
-
-    if (this.imagen) {
-      const filePath = `imagenes/${this.imagen.name}`;
-      console.log('FilePath:', filePath); // Verifica la ruta de archivo generada
-      
-      const fileRef = this.storage.ref(filePath);
-      const uploadTask = this.storage.upload(filePath, this.imagen);      
-
-      uploadTask.snapshotChanges().pipe(
-        finalize(() => {
-          fileRef.getDownloadURL().subscribe((url) => {
-            nuevoProducto.imagen = url;
-
-            this.firestore.collection('productos').add(nuevoProducto)
-              .then(() => {
-                console.log('Nuevo producto guardado en Firestore');
-                this.modalController.dismiss();
-              })
-              .catch((error) => {
-                console.error('Error al guardar el nuevo producto:', error);
-              });
+  
+    if (this.categoria === 'ofertas') {
+      nuevoProducto.categoria = 'ofertas';
+    
+      if (this.imagen) {
+        const filePath = `imagenes/${this.imagen.name}`;
+        console.log('FilePath:', filePath);
+    
+        const fileRef = this.storage.ref(filePath);
+        const uploadTask = this.storage.upload(filePath, this.imagen);
+    
+        uploadTask.snapshotChanges().pipe(
+          finalize(() => {
+            fileRef.getDownloadURL().subscribe((url) => {
+              nuevoProducto.imagen = url;
+    
+              this.firestore.collection('ofertas').add(nuevoProducto)
+                .then(() => {
+                  console.log('Nuevo producto de oferta guardado en Firestore');
+                  this.modalController.dismiss();
+                })
+                .catch((error) => {
+                  console.error('Error al guardar el nuevo producto de oferta:', error);
+                });
+            });
+          })
+        ).subscribe(
+          null,
+          (error) => {
+            console.error('Error durante la carga de la imagen:', error);
+          },
+          () => {
+            console.log('Upload completo');
+          }
+        );
+      } else {
+        this.firestore.collection('ofertas').add(nuevoProducto)
+          .then(() => {
+            console.log('Nuevo producto de oferta guardado en Firestore');
+            this.modalController.dismiss();
+          })
+          .catch((error) => {
+            console.error('Error al guardar el nuevo producto de oferta:', error);
           });
-        })
-      ).subscribe(
-        null, 
-        (error) => {
-          console.error('Error durante la carga de la imagen:', error);
-        },
-        () => {
-          console.log('Upload completo'); // Verifica si se completó la carga de la imagen correctamente
-        }
-      );
+      }
+        
     } else {
-      this.firestore.collection('productos').add(nuevoProducto)
-        .then(() => {
-          console.log('Nuevo producto guardado en Firestore');
-          this.modalController.dismiss();
-        })
-        .catch((error) => {
-          console.error('Error al guardar el nuevo producto:', error);
-        });
+      if (this.imagen) {
+        const filePath = `imagenes/${this.imagen.name}`;
+        console.log('FilePath:', filePath); // Verifica la ruta de archivo generada
+        
+        const fileRef = this.storage.ref(filePath);
+        const uploadTask = this.storage.upload(filePath, this.imagen);      
+  
+        uploadTask.snapshotChanges().pipe(
+          finalize(() => {
+            fileRef.getDownloadURL().subscribe((url) => {
+              nuevoProducto.imagen = url;
+  
+              this.firestore.collection('productos').add(nuevoProducto)
+                .then(() => {
+                  console.log('Nuevo producto guardado en Firestore');
+                  this.modalController.dismiss();
+                })
+                .catch((error) => {
+                  console.error('Error al guardar el nuevo producto:', error);
+                });
+            });
+          })
+        ).subscribe(
+          null, 
+          (error) => {
+            console.error('Error durante la carga de la imagen:', error);
+          },
+          () => {
+            console.log('Upload completo'); // Verifica si se completó la carga de la imagen correctamente
+          }
+        );
+      } else {
+        this.firestore.collection('productos').add(nuevoProducto)
+          .then(() => {
+            console.log('Nuevo producto guardado en Firestore');
+            this.modalController.dismiss();
+          })
+          .catch((error) => {
+            console.error('Error al guardar el nuevo producto:', error);
+          });
+      }
     }
   }
+  
 
   onFileChange(event: any) {
     const file = event.target.files[0];

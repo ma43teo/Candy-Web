@@ -15,8 +15,8 @@
     box-shadow: 1px 8px 0px #00000014;
     --highlinght-heigh:0px;
     margin-bottom: 10px;
-    color: #FF82FA;
-    border: 2px solid #FF82FA;
+    color: #FE0000 ;
+    border: 2px solid #FE0000;
     
   }
 
@@ -34,12 +34,12 @@
   }
 
   h1{
-    color: #DB49B2;
+    color: #FE0000;
     font-family: "Anton", sans-serif;
  
 }
 h2,a{
-  color: #DB49B2;
+  color:#FE0000;
   text-align: center;
 }
 .Milk1 {
@@ -109,10 +109,16 @@ h2,a{
             }
   
 .Guardar{
-background-color: #FF82FA;
-border-bottom: #FF82FA;
+background-color: #45CFDD;
+border-bottom: #45CFDD;
 border-radius: 50%;
 }
 .Inicio{
  margin-top:130px;
+ color: #001C30;
+
+}
+.sesion{
+  cursor:pointer;
+ color: #FE0000;
 }

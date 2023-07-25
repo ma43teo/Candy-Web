@@ -12,7 +12,7 @@
 
 <ion-card>
   <div class="container">
-    <h1 >Iniciar sesión<a (click)="irALoginAdmin()"><strong>/Admin</strong></a></h1>
+    <h1  color="secondary">Iniciar sesión<a (click)="irALoginAdmin()"><strong color="secondary" class="admin">/Admin</strong></a></h1>
     
 
     <ion-list>
@@ -29,12 +29,12 @@
     </ion-list>
 
     <div class="ion-padding">
-      <ion-button class="Guardar" (click)="Login()">Iniciar sesión</ion-button>
+      <ion-button color="primary" class="Guardar" (click)="Login()">Iniciar sesión</ion-button>
       <br>
-      <ion-button  class="Volver"(click)="Volver()">Volver</ion-button>
+      <ion-button color="secondary" class="Volver"(click)="Volver()">Volver</ion-button>
     </div>
   </div>
-  <button (click)="Recuperar()"><h2>Olvidaste la contraseña?</h2></button>
+  <button (click)="Recuperar()"><h2 color="tertiary">Olvidaste tu contraseña?</h2></button>
 </ion-card>
 
 </ion-content>

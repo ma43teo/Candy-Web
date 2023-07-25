@@ -16,8 +16,8 @@
       box-shadow: 1px 8px 0px #00000014;
       --highlinght-heigh:0px;
       margin-bottom: 10px;
-      color: #FF82FA;
-      border: 2px solid #FF82FA;
+      color: #FE0000;
+      border: 2px solid #FE0000;
     }
   
     ion-input{
@@ -31,9 +31,12 @@
     }
   
     h1,a{
-      color: #DB49B2;
+      color: #FE0000;
       font-family: "Anton", sans-serif;
-   
+  }
+  .iniciar{
+    cursor:pointer;
+    color:#001C30;
   }
   h2{
     color: #818181;
@@ -106,8 +109,6 @@
 }
   
   .Guardar{
-  background-color: #FF82FA;
-  border-bottom: #FF82FA;
   border-radius: 50%;
   }
 
