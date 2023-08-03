@@ -6,16 +6,15 @@
     </ion-toolbar>
     
     <ion-toolbar>
-      <ion-img class="Logo" src="https://mateogutierrez.neocities.org/Logo-removebg-preview.png" alt="Logo"></ion-img>
+      <ion-img class="Logo" src="https://mateogutierrez.neocities.org/Logo-con-palito2.png" alt="Logo"></ion-img>
   
       <ion-buttons slot="end">
         <div class="custom-searchbar">
-          <input type="text" placeholder="Buscar" class="search-input">
-          <button class="search-icon">
+          <input type="text" placeholder="Hola, ¿Qué estás buscando?" class="search-input" [(ngModel)]="searchQuery" (input)="buscar()">
+          <button class="search-icon" (click)="buscar()">
             <ion-icon name="search"></ion-icon>
           </button>
-        </div>
-        
+        </div> 
          
         <ion-button routerLink="/perfil">  
           <ion-icon name="person"></ion-icon>
@@ -77,8 +76,8 @@
   
 <ion-grid class="prueba">
   <ion-row class="prueba">
-    <ng-container *ngFor="let producto of productos$ | async">
-      <ion-col  *ngIf="producto.categoria === categoriaSeleccionada || categoriaSeleccionada === 'categorias'">
+    <ng-container  *ngFor="let producto of productos$ | async">
+      <ion-col  size="12" size-sm="6" size-md="3" size-lg="2" *ngIf="producto.categoria === categoriaSeleccionada || categoriaSeleccionada === 'categorias'">
         <ion-card class="small-card">
           <img class="tamañoimg imagen-centrada" [src]="producto.imagen" alt="Imagen del producto" (error)="imagenNoDisponible($event)">
           <ion-card-content>

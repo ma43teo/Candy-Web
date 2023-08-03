@@ -4,6 +4,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-registro',
@@ -20,11 +21,13 @@ export class RegistroPage implements OnInit {
 
   recaptchaVerifier?: firebase.auth.RecaptchaVerifier;
   confirmationResult?: firebase.auth.ConfirmationResult;
+  showPassword: boolean = false; 
 
   constructor(
     private router: Router,
     private afAuth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private alertController: AlertController // Add the AlertController
   ) {}
 
   ngOnInit() {
@@ -67,8 +70,39 @@ export class RegistroPage implements OnInit {
       console.error('El objeto recaptchaVerifier es undefined');
     }
   }
+  async showMissingFieldsAlert() {
+    let missingFields = [];
+    if (!this.nombre) missingFields.push('Nombre');
+    if (!this.apellido) missingFields.push('Apellido');
+    if (!this.telefono) missingFields.push('Teléfono');
+    if (!this.email) missingFields.push('Correo electrónico');
+    if (!this.contrasena) missingFields.push('Contraseña');
+  
+    const alert = await this.alertController.create({
+      header: 'Campos Obligatorios',
+      message: 'Por favor, complete los siguientes campos obligatorios:',
+      buttons: ['OK'],
+    });
+  
+    if (missingFields.length > 0) {
+      const listItems = missingFields.map((field) => `<li>${field}</li>`).join('');
+      alert.message += `${listItems}`;
+    }
+  
+    await alert.present();
+  }
+
 
   guardar() {
+    if (!this.nombre || !this.apellido || !this.telefono || !this.email || !this.contrasena) {
+      // Call the showMissingFieldsAlert() function when any field is missing
+      this.showMissingFieldsAlert();
+      return;
+    }
+    if (!this.nombre || !this.apellido || !this.telefono || !this.email || !this.contrasena) {
+      alert('Por favor, complete todos los campos obligatorios.');
+      return;
+    }
     const verificationCode = this.codigoVerificacion; // Obtén el código de verificación ingresado por el usuario
     const credential = this.confirmationResult?.verificationId
       ? firebase.auth.PhoneAuthProvider.credential(
@@ -113,5 +147,7 @@ export class RegistroPage implements OnInit {
         console.error('Error al registrar usuario y guardar los datos:', error);
       });
   }
-  
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+}
 }

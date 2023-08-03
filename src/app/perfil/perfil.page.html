@@ -1,59 +1,20 @@
 <ion-content>
 
-<ion-header class="header1">
-  
-  <ion-toolbar class="header1" color="pink">
-    
-  </ion-toolbar>
-  
-  <ion-toolbar>
-    <ion-img class="Logo" src="https://mateogutierrez.neocities.org/Logo-removebg-preview.png" alt="Logo"></ion-img>
-
-    <ion-buttons slot="end">
-      <div class="custom-searchbar">
-        <input type="text" placeholder="Hola, ¿Que estas buscando?" class="search-input">
-        <button class="search-icon">
-          <ion-icon name="search"></ion-icon>
-        </button>
-      </div>
+  <ion-header class="header1">
+    <ion-toolbar class="header1" color="primary">
       
-       
-      <ion-button routerLink="/perfil">  
-        <ion-icon name="person"></ion-icon>
-      </ion-button>
+    </ion-toolbar>
+    <ion-toolbar>
+      <ion-img class="Logo" src="https://mateogutierrez.neocities.org/Logo-con-palito2.png" alt="Logo"></ion-img>
+     
+      <div class="BotonesH">
+        <h2 class="separacion" style="cursor: pointer;"><a  class="Home"(click)="irAHome()">Inicio</a></h2>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
       
-      <ion-button routerLink="/carrito">
-        <ion-icon name="cart"></ion-icon>
-      </ion-button>  
-    </ion-buttons>
-  </ion-toolbar>
-
-  <ion-toolbar>
-    <div class="BotonesH">
-      <h2 class="separacion" style="cursor: pointer;"><a  class="Home"(click)="irAHome()">Inicio</a></h2>
-      <h2 class="separacion" style="cursor: pointer;">
-       
-       
-        <ion-select [(ngModel)]="categoriaSeleccionada">
-          <ion-select-option value="categorias">Categorías</ion-select-option>
-          <ion-select-option value="gomitas">Gomitas</ion-select-option>
-          <ion-select-option value="chocolates">Chocolates</ion-select-option>
-          <ion-select-option value="paletas">Paletas</ion-select-option>
-        </ion-select>
-        
-      </h2>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
-
-      <h2 class="separacion" style="cursor: pointer;">
-        <i class="fas fa-fire" style="color: red;"></i>
-        Ofertas
-      </h2>
-      
+      <h3 class="separacion" style="cursor: pointer;"><strong color="secondary" >Perfil de usuario</strong></h3>
     </div>
-
-  </ion-toolbar>
-  
-</ion-header>
+    </ion-toolbar>
+  </ion-header>
 
 
 <div class="perfil">

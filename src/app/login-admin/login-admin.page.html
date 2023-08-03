@@ -1,6 +1,3 @@
-
-
-
 <ion-content class="ion-padding">
   <img class="Milk1"src="https://mateogutierrez.neocities.org/milki.png">
   <img class="Milk3" src="https://mateogutierrez.neocities.org/milk22.png">
@@ -12,30 +9,28 @@
   <img class="Skis" src="https://mateogutierrez.neocities.org/skisJ.png">
 
 
-<ion-card>
-  <div class="container">
-    <h1 color="primary" >Admin<a (click)="irALogin()"><strong class="iniciar">/Iniciar Sesión</strong></a></h1>
-    
+  <ion-card>
+    <div class="container">
+      <h1 color="primary">Admin<a (click)="irALogin()"><strong class="iniciar">/Iniciar Sesión</strong></a></h1>
 
-    <ion-list>
+      <ion-list>
 
-      <ion-item lines="full">
-        <ion-label position="stacked">Correo Electronico</ion-label>
-        <ion-input type="email" [(ngModel)]="email"></ion-input>
-      </ion-item>
+        <ion-item lines="full">
+          <ion-label position="stacked">Correo Electrónico</ion-label>
+          <ion-input type="email" [(ngModel)]="email" required></ion-input>
+        </ion-item>
 
-      <ion-item lines="full">
-        <ion-label position="stacked">Contraseña</ion-label>
-        <ion-input type="password" [(ngModel)]="contrasena"></ion-input>
-      </ion-item>
-    </ion-list>
+        <ion-item lines="full">
+          <ion-label position="stacked">Contraseña</ion-label>
+          <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="contrasena" required></ion-input>
+          <ion-icon class="ojo" slot="end" [name]="showPassword ? 'eye-off' : 'eye'" (click)="togglePassword()"></ion-icon>
+        </ion-item>
+      </ion-list>
 
-    <div class="ion-padding">
-      <ion-button class="Guardar" (click)="iniciarSesion()">Iniciar sesión</ion-button>
-      
-
+      <div class="ion-padding">
+        <ion-button class="Guardar" (click)="iniciarSesion()">Iniciar sesión</ion-button>
+      </div>
     </div>
-  </div>
-</ion-card>
+  </ion-card>
 
 </ion-content>

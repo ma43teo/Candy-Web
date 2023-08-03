@@ -13,24 +13,27 @@ ion-header {
     max-height: 500px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.555);
+    margin-top: 200px;
   }
   
   ion-title {
     text-align: center;
     font-size: 24px;
     font-weight: bold;
-    color: #333;
+    color: #001C30;
     margin-bottom: 20px;
   }
   
   ion-item {
     margin-bottom: 16px;
+    border-radius: 15%;
   }
   
   ion-button {
     display: block;
-    width: 100%;
+    width: 80%;
+    margin: 0 auto; 
     margin-bottom: 16px;
     text-align: center;
   }
@@ -97,5 +100,194 @@ ion-header {
                   top: 600px;
                   left: 1000px;
                   }
+
+/* Estilos para pantallas medianas (tablets de menos de 992px) */
+@media (max-width: 991.98px) { 
+  .Milk1 {
+    width: 200px;
+    height: 300px;
+    top: 100px;
+    left: 0px;
+  }
+  .Milk2 {
+    width: 200px;
+    height: 300px;
+    top: 200px;
+    left: 0px;
+  }
+  .Milk3 {
+    width: 200px;
+    height: 300px;
+    top: 300px;
+    left: 0px;
+    transform: rotate(25deg);
+  }
+  .Pulparindo {
+    position: absolute;
+    height: 200px;
+    top: 550px;
+    left: 40px;
+  }
+  .Pulparindos {
+    position: absolute;
+    height: 200px;
+    top: 550px;
+    left: -15px;
+  }
+  .Gomitas {
+    position: absolute;
+    width: 200px;
+    height: 300px;
+    top: 100px;
+    left: 1350px;
+  }
+  .Gomitas2 {
+    position: absolute;
+    width: 200px;
+    height: 250px;
+    top: 250px;
+    left: 1350px;
+  }
+  .Ski {
+    position: absolute;
+    height: 250px;
+    top: 500px;
+    left: 1200px;
+  }
+  .Skis {
+    position: absolute;
+    top: 600px;
+    left: 1000px;
+  }
+}
+
+/* Estilos para pantallas pequeñas (móviles en landscape de menos de 768px) */
+@media (max-width: 767.98px) {
+  .Milk1 {
+    width: 150px;
+    height: 200px;
+    top: 150px;
+    left: 0px;
+  }
+  .Milk2 {
+    width: 150px;
+    height: 150px;
+    top: 250px;
+    left: 0px;
+  }
+  .Milk3 {
+    width: 150px;
+    height: 150px;
+    top: 370px;
+    left: 0px;
+  }
+  .Pulparindo {
+    position: absolute;
+    height: 150px;
+    top: 650px;
+    left: 40px;
+  }
+  .Pulparindos {
+    position: absolute;
+    height: 150px;
+    top: 650px;
+    left: -15px;
+  }
+  .Gomitas {
+    position: absolute;
+    width: 130px;
+    height: 230px;
+    top: 150px;
+    left: 650px;
+  }
+  .Gomitas2 {
+    position: absolute;
+    width: 130px;
+    height: 150px;
+    top: 350px;
+    left: 650px;
+  }
+  .Ski {
+    position: absolute;
+    height: 150px;
+    top: 600px;
+    left: 550px;
+  }
+  .Skis {
+    position: absolute;
+    top: 650px;
+    left: 450px;
+  }
+}
+
+/* Estilos para pantallas extra pequeñas (móviles en portrait) */
+@media (max-width: 600px) {
+  ion-card {
+    max-width: 250px;
+  }
+  ion-title {
+    font-size: 20px;
+  }
+  .card-container {
+    padding: 20px;
+    max-height: 100%;
+  }
+  .Milk1 {
+    width: 100px;
+    height: 150px;
+    top: 100px;
+    left: 0px;
+  }
+  .Milk2 {
+    width: 100px;
+    height: 100px;
+    top: 220px;
+    left: 0px;
+  }
+  .Milk3 {
+    width: 100px;
+    height: 100px;
+    top: 350px;
+    left: 0px;
+  }
+  .Pulparindo {
+    position: absolute;
+    height: 150px;
+    top: 550px;
+    left: 20px;
+  }
+  .Pulparindos {
+    position: absolute;
+    height: 100px;
+    top: 550px;
+    left: -10px;
+  }
+  .Gomitas {
+    position: absolute;
+    width: 100px;
+    height: 150px;
+    top: 100px;
+    left: 300px;
+  }
+  .Gomitas2 {
+    position: absolute;
+    width: 80px;
+    height: 100px;
+    top: 250px;
+    left: 300px;
+  }
+  .Ski {
+    position: absolute;
+    height: 100px;
+    top: 450px;
+    left: 250px;
+  }
+  .Skis {
+    position: absolute;
+    top: 500px;
+    left: 200px;
+  }
+}
+
       
   

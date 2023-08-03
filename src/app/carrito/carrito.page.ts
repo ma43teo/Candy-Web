@@ -2,6 +2,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CarritoService } from '../carrito.service';
 import { Producto } from '../producto.model';
+import { v4 as uuidv4 } from 'uuid';
+import { ModalController } from '@ionic/angular';
+import { PedidoConfirmadoModalPage } from '../pedido-confirmado-modal/pedido-confirmado-modal.page'; // Import PedidoConfirmadoModalPage
 
 @Component({
   selector: 'app-carrito',
@@ -10,31 +13,26 @@ import { Producto } from '../producto.model';
 })
 export class CarritoPage implements OnInit {
   carrito: Producto[] = [];
-  productosAgrupados: { [key: string]: Producto[] } = {}; // Cambio el tipo de productosAgrupados
+  productosAgrupados: { [key: string]: Producto[] } = {};
   total: number = 0;
 
+  constructor(private carritoService: CarritoService, private modalController: ModalController) {}
 
-
-  constructor(public carritoService: CarritoService) {}
 
   ngOnInit() {
     this.carrito = this.carritoService.getCarrito();
     this.productosAgrupados = this.groupByNombre(this.carrito);
-    this.calculateTotal(); // Llamamos a la función para calcular el total al iniciar la página
+    this.calculateTotal();
+    this.carritoService.setFechaRecoleccion(new Date()); // Establecer fechaRecoleccion a la fecha actual
   }
 
-  confirmarRecoleccion() {
-    console.log('Fecha de recolección:', this.carritoService.fechaRecoleccion);
-  
+  fechaRecoleccion: Date | null = null;
 
-    if (this.carritoService.fechaRecoleccion) {
-      // Convertir las fechas seleccionadas a objetos Date (esto no es necesario ya que ya están almacenadas en Date)
-      this.carritoService.guardarCarritoEnFirestore();
-    } else {
-      console.error('Por favor, selecciona una fecha y hora de recolección válidas.');
-    }
+  setFechaRecoleccion(eventValue: string) {
+    // Analizar el valor de cadena a un objeto de fecha
+    const fecha = new Date(eventValue);
+    this.carritoService.setFechaRecoleccion(fecha);
   }
-
 
   private groupByNombre(productos: Producto[]): { [key: string]: Producto[] } {
     const groupedProducts: { [key: string]: Producto[] } = {};
@@ -52,24 +50,52 @@ export class CarritoPage implements OnInit {
 
   getProductKeys() {
     return Object.keys(this.productosAgrupados);
- }
- removeProduct(producto: Producto) {
-  // Eliminar el producto del carrito y actualizar la lista de productos agrupados
-  this.carritoService.removeProducto(producto);
-  this.carrito = this.carritoService.getCarrito();
-  this.productosAgrupados = this.groupByNombre(this.carrito);
-  this.calculateTotal();
-}
-private calculateTotal() {
-  this.total = 0;
-  this.carrito.forEach((producto) => {
-    this.total += producto.precio * producto.cantidad;
-  });
-  this.carritoService.totalCompra = this.total;
-}
+  }
+  
 
- realizarPedido() {
-  // Aquí puede haber lógica adicional antes de guardar el carrito en Firestore
-  this.carritoService.guardarCarritoEnFirestore();
-}
+  removeProduct(producto: Producto) {
+    this.carritoService.removeProducto(producto);
+    this.carrito = this.carritoService.getCarrito();
+    this.productosAgrupados = this.groupByNombre(this.carrito);
+    this.calculateTotal();
+  }
+
+  private calculateTotal() {
+    this.total = 0;
+    this.carrito.forEach((producto) => {
+      this.total += producto.precio * producto.cantidad;
+    });
+    this.carritoService.totalCompra = this.total;
+  }
+
+  async realizarPedido() {
+    if (this.carritoService.fechaRecoleccion) {
+      const diaCarritoId = 'some-unique-id'; 
+      const semanaCarritoId = 'some-unique-id'; 
+      const mesCarritoId = 'some-unique-id'; 
+      this.carritoService.guardarCarritoEnFirestore(diaCarritoId, semanaCarritoId, mesCarritoId);
+
+      // Agregar la llamada a guardarPedidoEnPedidos()
+      this.carritoService.guardarPedidoEnPedidos(diaCarritoId, semanaCarritoId, mesCarritoId);
+      
+         // Mostrar un modal de confirmación con los detalles del pedido
+     const modal = await this.modalController.create({
+    component: PedidoConfirmadoModalPage,
+    componentProps: {
+      productos: this.carritoService.getCarrito(),
+      totalCompra: this.carritoService.totalCompra,
+      fechaRecoleccion: this.carritoService.fechaRecoleccion, // Pass the fechaRecoleccion property
+    },
+  });
+  
+      // Descartar el modal y vaciar el carrito cuando esté cerrado
+      modal.onDidDismiss().then(() => {
+        this.carritoService.vaciarCarrito();
+      });
+  
+      await modal.present();
+    } else {
+      console.error('Por favor, selecciona una fecha y hora de recolección válidas.');
+    }
+  }
 }

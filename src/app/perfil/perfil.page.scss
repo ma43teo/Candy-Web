@@ -1,83 +1,43 @@
 .Logo{
-  width: 150px;
-
+  width: 100px;
   }
   
   .header1{
-  background-color: #FF82FA;
-
-  }
+  background-color: #FE0000;
   
-  .contenedor{
-    background-color: antiquewhite;
   }
   
   .BotonesH{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 0px;
-    margin: 0%;
-
-
+    height: 40px;
+    margin-right: 20%;
+  
+    
   }
   .separacion {
-    margin-right: 150px; 
+    margin-top:-20px;
+    margin-right: 100px;
+    color:#001C30;
   }
 
-  .mini-icon{
-    color: #ff002b;
+  
+  .contenedor{
+    background-color: antiquewhite;
   }
-  .custom-searchbar {
-    
-    justify-content: center;
-    display: flex;
-    align-items: center;
-    width: 500px;
-    margin: 0 auto;
-    background-color: #ffffff;
-    border-radius: 20px;
-    padding: 5px;
-    box-shadow: 0px 0px 5px #ff00ff;
-   
+  
 
-  }
-  .fas fa-fire{
-    color: #ff002b;
-  }
-  
-  .search-input {
-    flex-grow: 1;
-    border: none;
-    border-radius: 20px;
-    padding: 10px;
-    font-size: 16px;
-    color: #999999;
-  }
-  
-  .search-icon {
-    background-color: #ff00ff;
-    
-    border: none;
-    border-radius: 20px;
-    padding: 10px;
-    margin-left: 5px;
-    cursor: pointer;
-  }
-  
-  .search-icon ion-icon {
-    color: #ffffff;
-  }
   .perfil{
       width: 700px;
       height: 400px;
       border-bottom: 1px solid #000;
       position: absolute;
-      top: 50%;
+      top: 40%;
       left: 50%;
       transform: translate(-50%, -50%);
       background: #ececec;
-      margin-top: 220px;
+      margin-top: 200px;
   }
   
   .nombre{

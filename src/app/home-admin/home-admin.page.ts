@@ -23,6 +23,7 @@ interface Producto {
   imagen: string;
   cantidad: number;
   mostrarDetalle: boolean;
+  
 }
 
 interface Usuario {
@@ -50,6 +51,7 @@ export class HomeAdminPage implements OnInit {
   searchQuery: string = '';
   usuariosCollection!: AngularFirestoreCollection<Usuario>;
   usuarios$!: Observable<Usuario[]>;
+  newPedidoCount: number=0;
  
 
   productosOfertasCollection?: AngularFirestoreCollection<ProductoOferta>;
@@ -69,8 +71,11 @@ export class HomeAdminPage implements OnInit {
     private toastController: ToastController,
     private alertController: AlertController,
     private router: Router
-  ) {}
-
+  ) {
+    this.firestore.collection('pedidos').valueChanges().subscribe((pedidos: any[]) => {
+      this.newPedidoCount = pedidos.length;
+    });
+  }
 
 
   async openModal() {
@@ -81,11 +86,6 @@ export class HomeAdminPage implements OnInit {
 
     return await modal.present();
   }
-  ofertas(){
-    this.router.navigate(['/ofertas']); 
-  }
-
-
   
   ngOnInit() {
     this.productosCollection = this.firestore.collection<Producto>('productos');
@@ -330,7 +330,9 @@ export class HomeAdminPage implements OnInit {
       this.usuarios$ = this.firestore.collection<Usuario>('usuarios').valueChanges();
     }
   }
-  
+  irAPedidos(){
+    this.router.navigate(['/pedidos']);
+}
   
 }  
   

@@ -9,5 +9,4 @@ export interface Producto {
     cantidad: number;
     mostrarDetalle:boolean;
     fechaRecoleccion: Date; 
-    horaRecoleccion: Date;
   }

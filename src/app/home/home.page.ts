@@ -9,6 +9,7 @@ import { ToastController } from '@ionic/angular';
 import { DetalleProductoModalPage } from '../detalle-producto-modal/detalle-producto-modal.page';
 import { CarritoService } from '../carrito.service';
 import { Router } from '@angular/router'
+import { map, startWith, tap } from 'rxjs/operators';
 
 
 
@@ -33,11 +34,15 @@ interface Producto {
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
+  categorias: string[] = [];
   categoriaSeleccionada: string = 'categorias';
   productosCollection!: AngularFirestoreCollection<Producto>;
   productos$!: Observable<Producto[]>;
   productos!: Producto[]; // Propiedad para almacenar los productos
   carrito: Producto[] = [];
+  searchQuery: string = ''; // Declaración de searchQuery aquí
+
+
   imagenNoDisponible(event: any) {
     // Lógica para manejar el caso de imagen no disponible
     event.target.src = 'ruta-de-la-imagen-por-defecto';
@@ -77,13 +82,25 @@ ofertas(){
     Swiper.use([Navigation]);
     this.initSwiper();
     this.productosCollection = this.firestore.collection<Producto>('productos');
-    this.productos$ = this.productosCollection.valueChanges();
-    this.productos$.subscribe(productos => {
-      this.productos = productos; // Asignar productos a la propiedad
-      console.log(this.productos); // Verifica que los productos se hayan asignado correctamente
-    });
+    this.productos$ = this.productosCollection.valueChanges().pipe(
+      map((productos: Producto[]) => {
+        if (this.searchQuery.trim() !== '') {
+          return productos.filter((producto: Producto) => producto.nombre.includes(this.searchQuery));
+        } else {
+          if (this.categoriaSeleccionada === 'categorias') {
+            return productos;
+          } else {
+            return productos.filter((producto: Producto) => producto.categoria === this.categoriaSeleccionada);
+          }
+        }
+      }),
+      startWith([]), // Inicia el Observable con un arreglo vacío
+      tap((productos: Producto[]) => {
+        // Verificar que los productos se estén filtrando correctamente
+        console.log(productos);
+      })
+    );
   }
-
 
 
   async agregarAlCarrito(producto: Producto) {
@@ -127,7 +144,25 @@ vaciarCarrito() {
   this.carritoService.vaciarCarrito();
 }
 
-
+buscar() {
+  if (this.searchQuery.trim() !== '') {
+    this.productos$ = this.productosCollection.valueChanges().pipe(
+      map((productos: Producto[]) => productos.filter((producto: Producto) => producto.nombre.includes(this.searchQuery))),
+      tap(() => this.categoriaSeleccionada = 'categorias')
+    );
+  } else {
+    if (this.categoriaSeleccionada === 'categorias') {
+      this.productos$ = this.productosCollection.valueChanges().pipe(
+        tap(() => this.categoriaSeleccionada = 'categorias')
+      );
+    } else {
+      this.productos$ = this.productosCollection.valueChanges().pipe(
+        map((productos: Producto[]) => productos.filter((producto: Producto) => producto.categoria === this.categoriaSeleccionada)),
+        tap(() => this.categoriaSeleccionada = 'categorias')
+      );
+    }
+  }
+}
 
 
 

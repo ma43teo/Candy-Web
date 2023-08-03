@@ -45,9 +45,11 @@
         <ion-item>
           <ion-label>Día y Hora de recolección:</ion-label>
           <ion-datetime
-            displayFormat="DD/MM/YYYY HH:mm"
-            [(ngModel)]="carritoService.fechaRecoleccion"
-          ></ion-datetime>
+  display-format="DD/MM/YYYY"
+  picker-format="DD MMM YYYY"
+  [(ngModel)]="fechaRecoleccion"
+  (ngModelChange)="setFechaRecoleccion($event)"
+></ion-datetime>
         </ion-item>
       </ion-col>
   <p>Si necesita Factura enviar <strong>Constancia de situacion fiscal </strong>a el siguiete numero <strong>249 178 7235</strong> </p>

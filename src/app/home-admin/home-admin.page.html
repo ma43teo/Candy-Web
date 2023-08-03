@@ -2,7 +2,7 @@
   <ion-header class="header1">
     <ion-toolbar class="header1" color="pink"></ion-toolbar>
     <ion-toolbar>
-      <ion-img class="Logo" src="https://mateogutierrez.neocities.org/Logo-removebg-preview.png" alt="Logo"></ion-img>
+      <ion-img class="Logo" src="https://mateogutierrez.neocities.org/Logo-con-palito2.png" alt="Logo"></ion-img>
       <ion-buttons slot="end">
         <div class="custom-searchbar">
           <input type="text" placeholder="Hola, ¿Qué estás buscando?" class="search-input" [(ngModel)]="searchQuery" (input)="buscar()">
@@ -10,7 +10,7 @@
             <ion-icon name="search"></ion-icon>
           </button>
         </div>                  
-        <ion-button routerLink="/perfil">
+        <ion-button routerLink="/perfil-admin">
           <ion-icon name="person"></ion-icon>
         </ion-button>
         <ion-button routerLink="/carrito">
@@ -32,8 +32,14 @@
             <ion-select-option value="paletas">Paletas</ion-select-option>
           </ion-select>
         </h2>
-        <h2 class="separacion" style="cursor: pointer;" (click)="ofertas()">Ofertas</h2>
+        
         <button class="separacion" *ngIf="categoriaSeleccionada !== 'categorias'" (click)="abrirModal()" class="increment-button">Incrementa tus precios</button>
+        <h2 class="separacion" style="cursor: pointer;"  (click)="irAPedidos()">
+          Pedidos
+          <span class="badge" *ngIf="newPedidoCount > 0">{{ newPedidoCount }}</span>
+        </h2>
+
+
       </div>
     </ion-toolbar>
   </ion-header>
@@ -97,11 +103,11 @@
               </ion-button>
             </ion-col>
             <ion-col size="6">
-              <ion-button expand="full" (click)="editarProducto(producto)">
+              <ion-button  class="Detalle" expand="full" (click)="editarProducto(producto)">
                 <ion-icon name="create"></ion-icon>
                 Editar
               </ion-button>
-            </ion-col>
+            </ion-col>
             <ion-col size="6">
               <ion-icon
                 class="Eliminar"

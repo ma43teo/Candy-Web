@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { ReportdayComponent } from './reportday/reportday.component';
-import { ReportweekComponent } from './reportweek/reportweek.component';
-import { ReportmonthComponent } from './reportmonth/reportmonth.component';
+
 
 
 const routes: Routes = [
@@ -51,18 +49,7 @@ const routes: Routes = [
     path: 'detalle-producto-modal',
     loadChildren: () => import('./detalle-producto-modal/detalle-producto-modal.module').then( m => m.DetalleProductoModalPageModule)
   },
-  {
-    path: 'reportedia',
-    component: ReportdayComponent
-  },
-  {
-    path: 'reportesemana',
-    component: ReportweekComponent
-  },
-  {
-    path: 'reportemes',
-    component: ReportmonthComponent
-  },
+  
   {
     path: 'ofertas',
     loadChildren: () => import('./ofertas/ofertas.module').then( m => m.OfertasPageModule)
@@ -70,6 +57,30 @@ const routes: Routes = [
   {
     path: 'carrito',
     loadChildren: () => import('./carrito/carrito.module').then( m => m.CarritoPageModule)
+  },
+  {
+    path: 'pedido-confirmado-modal',
+    loadChildren: () => import('./pedido-confirmado-modal/pedido-confirmado-modal.module').then( m => m.PedidoConfirmadoModalPageModule)
+  },
+  {
+    path: 'reportedia',
+    loadChildren: () => import('./reportedia/reportedia.module').then( m => m.ReportediaPageModule)
+  },
+  {
+    path: 'reportesemana',
+    loadChildren: () => import('./reportesemana/reportesemana.module').then( m => m.ReportesemanaPageModule)
+  },
+  {
+    path: 'reportemes',
+    loadChildren: () => import('./reportemes/reportemes.module').then( m => m.ReportemesPageModule)
+  },
+  {
+    path: 'pedidos',
+    loadChildren: () => import('./pedidos/pedidos.module').then( m => m.PedidosPageModule)
+  },
+  {
+    path: 'perfil-admin',
+    loadChildren: () => import('./perfil-admin/perfil-admin.module').then( m => m.PerfilAdminPageModule)
   },
   
 ];
@@ -80,12 +91,8 @@ const routes: Routes = [
   ],
   declarations: [
     // Otros componentes declarados anteriormente
-    ReportdayComponent,
-    ReportweekComponent,
-    ReportmonthComponent
   ],
-  exports: [RouterModule, ReportdayComponent,  ReportweekComponent,
-    ReportmonthComponent]
+  exports: [RouterModule]
   
 })
 export class AppRoutingModule { }
