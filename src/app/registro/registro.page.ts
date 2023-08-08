@@ -4,7 +4,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-registro',
@@ -24,6 +24,7 @@ export class RegistroPage implements OnInit {
   showPassword: boolean = false; 
 
   constructor(
+    private toastController: ToastController,    
     private router: Router,
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
@@ -91,7 +92,15 @@ export class RegistroPage implements OnInit {
   
     await alert.present();
   }
-
+  async showRegistrationSuccessToast() {
+    const toast = await this.toastController.create({
+      message: 'Registro exitoso. ¡Bienvenido!',
+      duration: 2000,
+      position: 'bottom',
+      color: 'success'
+    });
+    toast.present();
+  }
 
   guardar() {
     if (!this.nombre || !this.apellido || !this.telefono || !this.email || !this.contrasena) {
@@ -134,6 +143,7 @@ export class RegistroPage implements OnInit {
             })
             .then(() => {
               console.log('Usuario registrado y datos guardados exitosamente');
+              this.showRegistrationSuccessToast();
               this.router.navigate(['/home']);
             })
             .catch((error: any) => {

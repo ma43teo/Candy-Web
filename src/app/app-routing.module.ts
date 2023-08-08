@@ -82,6 +82,10 @@ const routes: Routes = [
     path: 'perfil-admin',
     loadChildren: () => import('./perfil-admin/perfil-admin.module').then( m => m.PerfilAdminPageModule)
   },
+  {
+    path: 'welcome-modal',
+    loadChildren: () => import('./welcome-modal/welcome-modal.module').then( m => m.WelcomeModalPageModule)
+  },
   
 ];
 

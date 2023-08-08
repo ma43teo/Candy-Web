@@ -10,7 +10,17 @@
   .contenedor{
     background-color: antiquewhite;
   }
+  .producto-imagen {
+    max-width: 50px;
+    max-height: 50px;
+    transition: max-width 0.3s, max-height 0.3s;
+    cursor: pointer;
+  }
   
+  .imagen-grande {
+    max-width: 200px;
+    max-height: 200px;
+  }
   .BotonesH{
     display: flex;
     justify-content: center;
@@ -26,6 +36,10 @@
   }
   .productos{
     margin-right: -250px;
+
+  }
+  .Fecha{
+    margin-left:-150px;
 
   }
 
@@ -174,4 +188,5 @@
 .total {
   font-size:14px;
 }
+
 }

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AlertController } from '@ionic/angular'; // Import AlertController
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login-admin',
@@ -16,7 +16,8 @@ export class LoginAdminPage {
   constructor(
     private router: Router,
     private afAuth: AngularFireAuth,
-    private alertController: AlertController // Inject AlertController
+    private alertController: AlertController, 
+    private toastController: ToastController,
   ) {}
 
   irALogin() {
@@ -34,11 +35,21 @@ export class LoginAdminPage {
 
   async showInvalidCredentialsAlert() {
     const alert = await this.alertController.create({
-      header: 'Credenciales Inválidas',
-      message: 'El correo electrónico o la contraseña son incorrectos.',
+      message: 'Correo y/o contraseña incorrectos',
       buttons: ['OK'],
     });
     await alert.present();
+  }
+
+  async showSuccessMessage() {
+    const toast = await this.toastController.create({
+      header: 'BIENVENIDO ADMINISTRADOR',
+      message: 'Administrador autenticado correctamente',
+      duration: 2000,
+      position: 'middle',
+      color: 'tertiary'
+    });
+    toast.present();
   }
 
   async iniciarSesion() {
@@ -47,24 +58,23 @@ export class LoginAdminPage {
       this.showEmptyFieldsAlert();
       return;
     }
-
+  
     // Verificar las credenciales de administrador
     if (this.email === 'solucionesgap1@gmail.com' && this.contrasena === 'DulceriaEstrella') {
-      // Autenticar al administrador con Firebase Authentication
-      this.afAuth
-        .signInWithEmailAndPassword(this.email, this.contrasena)
-        .then(() => {
-          // Autenticación exitosa
-          console.log('Administrador autenticado correctamente');
-
-          // Redirigir a la página de administrador
-          this.router.navigate(['/home-admin']);
-        })
-        .catch((error) => {
-          // Error de autenticación
-          console.error('Error al autenticar al administrador', error);
-          this.showInvalidCredentialsAlert();
-        });
+      try {
+        // Autenticar al administrador con Firebase Authentication
+        await this.afAuth.signInWithEmailAndPassword(this.email, this.contrasena);
+  
+        // Autenticación exitosa
+        this.showSuccessMessage();
+  
+        // Redirigir a la página de administrador
+        this.router.navigate(['/home-admin']);
+      } catch (error) {
+        // Error de autenticación
+        console.error('Error al autenticar al administrador', error);
+        this.showInvalidCredentialsAlert();
+      }
     } else {
       this.showInvalidCredentialsAlert();
     }
@@ -72,5 +82,5 @@ export class LoginAdminPage {
 
   togglePassword() {
     this.showPassword = !this.showPassword;
-  }
+  }
 }

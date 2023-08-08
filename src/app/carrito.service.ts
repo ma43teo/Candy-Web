@@ -6,9 +6,10 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { Observable } from 'rxjs';
-import { Order } from './order.model';
-import { map } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+
+
+
 
 
 @Injectable({
@@ -22,7 +23,14 @@ import { of } from 'rxjs';
     dia: string = '';
    semana: string = '';
     mes: string = '';
-    constructor(private firestore: AngularFirestore, private afAuth: AngularFireAuth) { }
+
+    productosOriginales: Producto[] = [];
+    private productosCollection: AngularFirestoreCollection<Producto>;
+    
+
+    constructor(private firestore: AngularFirestore, private afAuth: AngularFireAuth) { 
+       this.productosCollection = this.firestore.collection<Producto>('productos');
+    }
 
     getinventario(): Observable<any[]> {
       const pedidosRef = this.firestore.collection('inventario');
@@ -39,7 +47,7 @@ import { of } from 'rxjs';
       }
      
     }
-  
+    
     getCarrito(): Producto[] {
       return this.carrito; 
     }
@@ -85,7 +93,36 @@ private getFormattedDate(date: Date): string {
   const day = date.getDate().toString().padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
-    
+  
+
+
+async actualizarCantidadProducto(nombre: string, cantidad: number): Promise<void> {
+  try {
+    const querySnapshot = await this.firestore.collection<Producto>('productos', ref =>
+      ref.where('nombre', '==', nombre).limit(1)
+    ).get().toPromise();
+
+    if (querySnapshot && !querySnapshot.empty) { // Verificar si querySnapshot no es undefined
+      const docRef = querySnapshot.docs[0].ref;
+      const productoData = querySnapshot.docs[0].data() as Producto;
+      const currentCantidad = productoData.cantidad || 0;
+      const updatedCantidad = currentCantidad - cantidad;
+
+      await docRef.update({ cantidad: updatedCantidad });
+    } else {
+      console.error('No se encontró el producto con el nombre:', nombre);
+      throw new Error('Producto no encontrado en la base de datos');
+    }
+  } catch (error) {
+    console.error('Error al actualizar la cantidad del producto en la base de datos:', error);
+    throw error;
+  }
+}
+
+
+
+
+
 async guardarCarritoEnFirestore(diaCarritoId: string, semanaCarritoId: string, mesCarritoId: string) {
   try {
     const user = await this.afAuth.currentUser;
@@ -159,33 +196,35 @@ async guardarCarritoEnFirestore(diaCarritoId: string, semanaCarritoId: string, m
     }
   }
   // Agregar función para guardar el pedido en la colección "pedidos"
-guardarPedidoEnPedidos(diaCarritoId: string, semanaCarritoId: string, mesCarritoId: string) {
-  const user = firebase.auth().currentUser;
-  if (user) {
-    const email = user.email;
-    if (email) {
-      const pedidoRef = this.firestore.collection('pedidos');
+  guardarPedidoEnPedidos(diaCarritoId: string, semanaCarritoId: string, mesCarritoId: string) {
+    const user = firebase.auth().currentUser;
+    if (user) {
+      const email = user.email;
+      if (email) {
+        const pedidoRef = this.firestore.collection('pedidos');
 
-      // Guardar el pedido en la colección "pedidos"
-      if (this.fechaRecoleccion) {
-        const pedidoId = uuidv4(); // Identificador único para el pedido
-        console.log('Pedido ID:', pedidoId);
-        pedidoRef.doc(pedidoId).set({
-          user: email,
-          productos: this.carrito,
-          totalCompra: this.totalCompra,
-          fechaRecoleccion: this.fechaRecoleccion,
-        });
+        // Guardar el pedido en la colección "pedidos"
+        if (this.fechaRecoleccion) {
+          const pedidoId = uuidv4(); // Identificador único para el pedido
+          console.log('Pedido ID:', pedidoId);
+          pedidoRef.doc(pedidoId).set({
+            user: email,
+            productos: this.carrito,
+            totalCompra: this.totalCompra,
+            fechaRecoleccion: this.fechaRecoleccion,
+            pedidoId: pedidoId, // Agregar el pedidoId
+          });
+        }
+
+        console.log('Pedido guardado en la colección "pedidos"');
+      } else {
+        console.error('El usuario no tiene un correo electrónico.');
       }
-
-      console.log('Pedido guardado en la colección "pedidos"');
     } else {
-      console.error('El usuario no tiene un correo electrónico.');
-    }
-  } else {
-    console.error('No se pudo obtener el usuario actual.');
+      console.error('No se pudo obtener el usuario actual.');
+    }
   }
-}
+
   
     removeProducto(producto: Producto) {
       // Encontrar el índice del producto en el carrito

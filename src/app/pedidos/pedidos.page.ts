@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Platform, ModalController, AlertController } from '@ionic/angular';
 import { DocumentReference } from '@angular/fire/firestore'; // Agrega esta línea
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-pedidos',
@@ -19,7 +20,8 @@ export class PedidosPage implements OnInit {
   constructor(
     private pedidosService: PedidosService,
     private router: Router,
-    private platform: Platform,
+    private platform: Platform,    
+    private toastController: ToastController,
     private alertController: AlertController,
     private modalController: ModalController,
     private firestore: AngularFirestore // Agrega AngularFirestore al constructor
@@ -33,6 +35,39 @@ export class PedidosPage implements OnInit {
     this.pedidosService.getAllOrders().subscribe((orders: Order[]) => {
       this.orders = orders;
     });
+  }
+ 
+
+
+  async eliminarPedido(pedidoId: string) {
+    const alert = await this.alertController.create({
+      header: 'Confirmar eliminación',
+      message: '¿Estás seguro de que deseas eliminar este pedido?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          handler: async () => {
+            try {
+              await this.firestore.collection('pedidos').doc(pedidoId).delete();
+
+              const toast = await this.toastController.create({
+                message: 'Pedido eliminado correctamente',
+                duration: 2000,
+                position: 'bottom',
+              });
+              toast.present();
+            } catch (error) {
+              console.error('Error al eliminar el pedido:', error);
+            }
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
   // Helper method to format the date

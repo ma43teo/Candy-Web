@@ -398,33 +398,42 @@
     height: 140px;
   }
   
-  .small-card img {
-    margin: 0px;
-    max-width: 80px;
-    max-height: 80px; /* Ajusta el valor según tus necesidades */
+  .tamañoimg {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  .tamañoimg{
-    width: 60px;
-    height: 60px;
+  .imagen-centrada {
+    display: block;
+    margin: 0 auto;
   }
   
   .Carrito {
-    font-size: 7px;
+    top: -5px;
+    font-size:10px;
+    position: relative;
     justify-content: center;
     align-items: center;
-    margin-top: -10px;
-    border-radius: 20px;
-    width: 20px;
-    height:15px;
-  }
+    width: 50px;
+    height: 20px;
+    color:#45CFDD;
   
-  .Detalle {
-    font-size: 7px;
+  }
+    
+  
+  
+  .Detalle{
+    top: -5px;
+    font-size:10px;
+    position: relative;
     justify-content: center;
-    align-items: center;
-    margin-top: -30px;
-    width: 15px;
-    height:15px;
+    align-items:center;
+    width: 50px;
+    height: 20px;
+    color:#45CFDD;
+  
   }
   .nombre-producto {
     margin-top: -10px;
@@ -468,12 +477,12 @@
   }
 }
 .chat{
-  width: 70px;
+  width: 50px;
   position: relative;
   right: 20px;
   bottom: 180px;
   float: left;
   position: fixed;
   overflow:hidden;
- z-index:100;
+z-index:100;
 }

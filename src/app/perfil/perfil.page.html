@@ -16,7 +16,7 @@
     </ion-toolbar>
   </ion-header>
 
-
+<div class="Ajuste">
 <div class="perfil">
   <h1 class="nombre">Perfil</h1>
   <div class="name"></div>
@@ -25,9 +25,7 @@
     <div class="foto">
       <p>{{ getIniciales() }}</p>
     </div>
-    <div class="user">
-      <p>{{ apellido }} {{ nombre }}</p>
-    </div>
+ 
   </div>
 
   <div class="datos">
@@ -44,7 +42,7 @@
     <button *ngIf="editando && !cambiosRealizados" (click)="cancelarEdicion()">Cancelar</button>
   </div>
 </div>
-
+</div>
 
 
   <ion-button color="primary" class="exit"(click)="cerrarSesion()" expand="full">
@@ -65,4 +63,4 @@
       </div>
     </div>
 
-  </ion-content>
+  </ion-content>

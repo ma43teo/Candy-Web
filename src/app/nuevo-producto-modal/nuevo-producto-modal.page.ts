@@ -4,6 +4,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class NuevoProductoModalPage {
     private modalController: ModalController,
     private firestore: AngularFirestore,
     private storage: AngularFireStorage,
+    private toastController: ToastController,
     private router: Router
   ) {}
 
@@ -57,9 +59,18 @@ export class NuevoProductoModalPage {
               nuevoProducto.imagen = url;
     
               this.firestore.collection('ofertas').add(nuevoProducto)
-                .then(() => {
-                  console.log('Nuevo producto de oferta guardado en Firestore');
-                  this.modalController.dismiss();
+              .then(async () => {
+                // Cierra el modal
+                this.modalController.dismiss();
+        
+                // Muestra un mensaje de éxito
+                const toast = await this.toastController.create({
+                  message: 'Nuevo producto de oferta guardado exitosamente',
+                  duration: 2000,
+                  position: 'bottom',
+                  color: 'success'
+                });
+                toast.present();
                 })
                 .catch((error) => {
                   console.error('Error al guardar el nuevo producto de oferta:', error);
@@ -100,11 +111,20 @@ export class NuevoProductoModalPage {
               nuevoProducto.imagen = url;
   
               this.firestore.collection('productos').add(nuevoProducto)
-                .then(() => {
-                  console.log('Nuevo producto guardado en Firestore');
-                  this.modalController.dismiss();
-                })
-                .catch((error) => {
+            .then(async () => {
+              // Cierra el modal
+              this.modalController.dismiss();
+      
+              // Muestra un mensaje de éxito
+              const toast = await this.toastController.create({
+                message: 'Nuevo producto creado exitosamente',
+                duration: 2000,
+                position: 'bottom',
+                color: 'success'
+              });
+              toast.present();
+    
+             }) .catch((error) => {
                   console.error('Error al guardar el nuevo producto:', error);
                 });
             });

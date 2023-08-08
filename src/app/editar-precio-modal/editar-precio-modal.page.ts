@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { ActivatedRoute } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 
 
 interface Producto {
@@ -29,11 +30,13 @@ export class EditarPrecioModalPage implements OnInit {
   nuevaDescripcion: string = '';
   nuevaCategoria: string = '';
   nuevaImagen: string = '';
+  nuevaCantidad: number =0;
 
   constructor(
     private modalController: ModalController,
     private firestore: AngularFirestore,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
@@ -44,6 +47,7 @@ export class EditarPrecioModalPage implements OnInit {
       this.nuevaDescripcion = this.producto.descripcion;
       this.nuevaCategoria = this.producto.categoria;
       this.nuevaImagen = this.producto.imagen;
+      this.nuevaCantidad = this.producto.cantidad;
     }
   }
 
@@ -64,11 +68,21 @@ export class EditarPrecioModalPage implements OnInit {
           precioPorMayor: this.nuevoPrecioPorMayor,
           descripcion: this.nuevaDescripcion,
           categoria: this.nuevaCategoria,
-          imagen: this.nuevaImagen
+          imagen: this.nuevaImagen,
+          cantidad: this.nuevaCantidad
           // Actualiza más campos según los que deseas editar
-        }).then(() => {
-          // Cierra el modal y muestra un mensaje de éxito
-          this.modalController.dismiss({ success: true });
+        }).then(async () => {
+          // Cierra el modal
+          this.modalController.dismiss();
+  
+          // Muestra un mensaje de éxito
+          const toast = await this.toastController.create({
+            message: 'Cambios guardados exitosamente',
+            duration: 2000,
+            position: 'bottom',
+            color: 'success'
+          });
+          toast.present();
         }).catch(error => {
           console.error('Error al guardar cambios en la colección "productos":', error);
           // Muestra un mensaje de error si la actualización falla
@@ -77,7 +91,6 @@ export class EditarPrecioModalPage implements OnInit {
         console.error('No se encontró ningún documento con el nombre proporcionado en la colección "productos"');
       }
     });
-
     // Realiza la consulta para buscar el documento por el nombre en la colección "ofertas"
     const ofertasQuery = this.firestore.collection('ofertas', ref => ref.where('nombre', '==', this.producto.nombre));
   
@@ -94,11 +107,21 @@ export class EditarPrecioModalPage implements OnInit {
           precioPorMayor: this.nuevoPrecioPorMayor,
           descripcion: this.nuevaDescripcion,
           categoria: this.nuevaCategoria,
-          imagen: this.nuevaImagen
+          imagen: this.nuevaImagen,
+          cantidad: this.nuevaCantidad
           // Actualiza más campos según los que deseas editar
-        }).then(() => {
-          // Cierra el modal y muestra un mensaje de éxito
-          this.modalController.dismiss({ success: true });
+        }).then(async () => {
+          // Cierra el modal
+          this.modalController.dismiss();
+  
+          // Muestra un mensaje de éxito
+          const toast = await this.toastController.create({
+            message: 'Cambios de oferta guardados exitosamente',
+            duration: 2000,
+            position: 'bottom',
+            color: 'success'
+          });
+          toast.present();
         }).catch(error => {
           console.error('Error al guardar cambios en la colección "ofertas":', error);
           // Muestra un mensaje de error si la actualización falla

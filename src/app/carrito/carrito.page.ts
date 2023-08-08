@@ -5,6 +5,9 @@ import { Producto } from '../producto.model';
 import { v4 as uuidv4 } from 'uuid';
 import { ModalController } from '@ionic/angular';
 import { PedidoConfirmadoModalPage } from '../pedido-confirmado-modal/pedido-confirmado-modal.page'; // Import PedidoConfirmadoModalPage
+import {  AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { AngularFirestore,  } from '@angular/fire/compat/firestore';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-carrito',
@@ -15,8 +18,11 @@ export class CarritoPage implements OnInit {
   carrito: Producto[] = [];
   productosAgrupados: { [key: string]: Producto[] } = {};
   total: number = 0;
+  private productosCollection: AngularFirestoreCollection<Producto>;
 
-  constructor(private carritoService: CarritoService, private modalController: ModalController) {}
+  constructor(private carritoService: CarritoService, private modalController: ModalController,  private firestore: AngularFirestore,private alertController: AlertController) {
+    this.productosCollection = this.firestore.collection<Producto>('productos');
+  }
 
 
   ngOnInit() {
@@ -28,11 +34,17 @@ export class CarritoPage implements OnInit {
 
   fechaRecoleccion: Date | null = null;
 
-  setFechaRecoleccion(eventValue: string) {
-    // Analizar el valor de cadena a un objeto de fecha
-    const fecha = new Date(eventValue);
-    this.carritoService.setFechaRecoleccion(fecha);
-  }
+  async setFechaRecoleccion(eventValue: string) {
+    const fechaSeleccionada = new Date(eventValue);
+    const fechaActual = new Date();
+  
+    if (fechaSeleccionada < fechaActual) {
+      // Mostrar alerta de fecha no válida
+      await this.mostrarAlertaFechaPasada();
+    } else {
+      this.carritoService.setFechaRecoleccion(fechaSeleccionada);
+    }
+  }
 
   private groupByNombre(productos: Producto[]): { [key: string]: Producto[] } {
     const groupedProducts: { [key: string]: Producto[] } = {};
@@ -54,11 +66,26 @@ export class CarritoPage implements OnInit {
   
 
   removeProduct(producto: Producto) {
-    this.carritoService.removeProducto(producto);
-    this.carrito = this.carritoService.getCarrito();
+    // Encontrar el índice del producto en el carrito
+    const index = this.carrito.findIndex((p) => p.nombre === producto.nombre);
+  
+    // Si el producto está en el carrito, reducir su cantidad en uno
+    if (index !== -1) {
+      const productoEnCarrito = this.carrito[index];
+      if (productoEnCarrito.cantidad > 1) {
+        productoEnCarrito.cantidad--;
+      } else {
+        // Si la cantidad es 1 o menos, eliminar el producto del carrito
+        this.carrito.splice(index, 1);
+      }
+    }
+  
+    // Actualizar la lista de productos agrupados y el total
     this.productosAgrupados = this.groupByNombre(this.carrito);
     this.calculateTotal();
   }
+  
+  
 
   private calculateTotal() {
     this.total = 0;
@@ -67,17 +94,33 @@ export class CarritoPage implements OnInit {
     });
     this.carritoService.totalCompra = this.total;
   }
+  async actualizarCantidadesEnBaseDeDatos() {
+    const productosCarrito = this.carritoService.getCarrito();
+    for (const producto of productosCarrito) {
+      await this.carritoService.actualizarCantidadProducto(producto.nombre, producto.cantidad);
+    }
+  }
 
   async realizarPedido() {
     if (this.carritoService.fechaRecoleccion) {
-      const diaCarritoId = 'some-unique-id'; 
-      const semanaCarritoId = 'some-unique-id'; 
-      const mesCarritoId = 'some-unique-id'; 
-      this.carritoService.guardarCarritoEnFirestore(diaCarritoId, semanaCarritoId, mesCarritoId);
+      // Crear un diálogo de confirmación
+      const confirmacion = await this.mostrarDialogoConfirmacion();
+      
+      if (confirmacion) {
+        const diaCarritoId = 'some-unique-id';
+        const semanaCarritoId = 'some-unique-id';
+        const mesCarritoId = 'some-unique-id';
+        this.carritoService.guardarCarritoEnFirestore(diaCarritoId, semanaCarritoId, mesCarritoId);
+
+
 
       // Agregar la llamada a guardarPedidoEnPedidos()
       this.carritoService.guardarPedidoEnPedidos(diaCarritoId, semanaCarritoId, mesCarritoId);
+
+      await this.actualizarCantidadesEnBaseDeDatos();
+
       
+
          // Mostrar un modal de confirmación con los detalles del pedido
      const modal = await this.modalController.create({
     component: PedidoConfirmadoModalPage,
@@ -97,5 +140,40 @@ export class CarritoPage implements OnInit {
     } else {
       console.error('Por favor, selecciona una fecha y hora de recolección válidas.');
     }
+  }
+}
+async mostrarAlertaFechaPasada() {
+  const alert = await this.alertController.create({
+    header: 'Fecha no válida',
+    message: 'No puede seleccionar una fecha y hora anterior a la actual.',
+    buttons: ['OK'],
+  });
+
+  await alert.present();
+  }
+async mostrarDialogoConfirmacion(): Promise<boolean> {
+  return new Promise<boolean>(async (resolve) => {
+    const alert = await this.alertController.create({
+      header: 'Confirmación de Pedido',
+      message: '¿Estás seguro de que deseas realizar este pedido?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            resolve(false);
+          },
+        },
+        {
+          text: 'Confirmar',
+          handler: () => {
+            resolve(true);
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+    });
   }
 }

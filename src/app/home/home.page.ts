@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import Swiper, { Navigation } from 'swiper';
+import Swiper, { Navigation, Autoplay } from 'swiper';
 import { ModalController, NavController} from '@ionic/angular';
 import { NuevoProductoModalPage } from '../nuevo-producto-modal/nuevo-producto-modal.page';
 import { EditarPrecioModalPage } from '../editar-precio-modal/editar-precio-modal.page';
@@ -10,6 +10,10 @@ import { DetalleProductoModalPage } from '../detalle-producto-modal/detalle-prod
 import { CarritoService } from '../carrito.service';
 import { Router } from '@angular/router'
 import { map, startWith, tap } from 'rxjs/operators';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { WelcomeModalPage } from '../welcome-modal/welcome-modal.page';
+
+
 
 
 
@@ -26,6 +30,7 @@ interface Producto {
   mostrarDetalle: boolean;
   fechaRecoleccion: Date; 
   horaRecoleccion: Date;
+  cantidadCarrito: number; 
 }
 
 @Component({
@@ -41,7 +46,8 @@ export class HomePage implements OnInit {
   productos!: Producto[]; // Propiedad para almacenar los productos
   carrito: Producto[] = [];
   searchQuery: string = ''; // Declaración de searchQuery aquí
-
+  cantidadTotalCarrito = 0; // Nueva propiedad para mantener el número total de productos en el carrito
+  userId: string = '';
 
   imagenNoDisponible(event: any) {
     // Lógica para manejar el caso de imagen no disponible
@@ -53,6 +59,7 @@ export class HomePage implements OnInit {
     private toastController: ToastController,
     private navCtrl: NavController,
     private carritoService: CarritoService,
+    private afAuth: AngularFireAuth,
     private router:Router
 
   ) {}
@@ -79,11 +86,14 @@ ofertas(){
 }
  
   ngOnInit() {
+    
     Swiper.use([Navigation]);
     this.initSwiper();
     this.productosCollection = this.firestore.collection<Producto>('productos');
     this.productos$ = this.productosCollection.valueChanges().pipe(
       map((productos: Producto[]) => {
+        // Después de cargar los productos, inicializa cantidadCarrito con cantidad
+      productos.forEach((producto) => (producto.cantidadCarrito = producto.cantidad));
         if (this.searchQuery.trim() !== '') {
           return productos.filter((producto: Producto) => producto.nombre.includes(this.searchQuery));
         } else {
@@ -100,29 +110,72 @@ ofertas(){
         console.log(productos);
       })
     );
-  }
-
-
-  async agregarAlCarrito(producto: Producto) {
-    this.carritoService.agregarProducto(producto);
-  
-    if (producto.cantidad > 0) {
-      const index = this.carrito.findIndex((item) => item.nombre === producto.nombre);
-  
-      if (index !== -1) {
-        this.carrito[index].cantidad++;
-      } else {
-        this.carrito.push({ ...producto, cantidad: 1 });
-      }
-  
-      producto.cantidad--; // Move the decrement inside the condition
-  
-      // Update the counter in the button
+    
+    this.carritoService.getCarrito().forEach((producto) => {
       const contadorButton = document.getElementById(`contador-${producto.nombre}`);
       if (contadorButton) {
         contadorButton.innerHTML = producto.cantidad.toString();
       }
+    });
+  }
   
+  async agregarAlCarrito(producto: Producto, cantidad: number) {
+
+    try {
+      const user = await this.afAuth.currentUser;
+      if (user) {
+        // Usuario autenticado, verificar su existencia en la colección "usuarios"
+        const userId = user.uid;
+        const userDocRef = this.firestore.collection('usuarios').doc(userId);
+  
+        // Verificar si el documento del usuario existe en la colección "usuarios"
+        const userSnapshot = await userDocRef.get().toPromise();
+        if (userSnapshot && userSnapshot.exists) { // Verificar si userSnapshot es válido y existe
+          // Usuario autenticado y existe en la colección "usuarios"
+          // Agregar el producto al carrito y realizar otras acciones necesarias
+          console.log('Usuario autenticado y existe en la colección "usuarios"');
+          // Resto del código...
+        } else {
+          // Usuario autenticado pero no existe en la colección "usuarios"
+          // Mostrar una alerta u otra lógica específica
+          console.log('Usuario autenticado pero no existe en la colección "usuarios"');
+          // Resto del código o mostrar una alerta
+          return;
+        }
+      } else {
+        // Usuario no autenticado, mostrar una alerta
+        console.log('Usuario no autenticado, no se puede agregar al carrito');
+        const toast = await this.toastController.create({
+          message: 'Inicia sesión para agregar productos al carrito',
+          duration: 2000,
+          position: 'bottom',
+        });
+        toast.present();
+        return; // Detener la función si el usuario no está autenticado
+      }
+  
+      // Resto del código para agregar al carrito si el usuario está autenticado
+      // ...
+    } catch (error) {
+      console.error('Error al verificar la autenticación o la existencia del usuario:', error);
+      // Resto del código para manejar el error si ocurre algún problema en la verificación
+      // ...
+    }
+  
+  
+    // Verificar si hay suficientes productos disponibles para agregar al carrito
+    if (producto.cantidad >= cantidad) {
+      producto.cantidad -= cantidad; // Restar la cantidad seleccionada del producto
+
+      // Agregar el producto al carrito
+      this.carritoService.agregarProducto(producto);
+
+      // Actualizar el contador en el botón después de agregar un producto al carrito
+      const contadorButton = document.getElementById(`contador-${producto.nombre}`);
+      if (contadorButton) {
+        contadorButton.innerHTML = producto.cantidad.toString();
+      }
+
       // Show a toast message
       const toast = await this.toastController.create({
         message: 'Producto agregado al carrito',
@@ -130,10 +183,18 @@ ofertas(){
         position: 'bottom',
       });
       toast.present();
+    } else {
+      // Show a toast message indicating that there are not enough products available
+      const toast = await this.toastController.create({
+        message: 'No hay suficientes productos disponibles',
+        duration: 2000,
+        position: 'bottom',
+      });
+      toast.present();
     }
+    
   }
   
-
  // Función para obtener el total de productos en el carrito
  getTotalProductosEnCarrito(): number {
   return this.carritoService.getCarrito().reduce((total, producto) => total + producto.cantidad, 0);
@@ -181,6 +242,7 @@ buscar() {
   
   private initSwiper() {
     setTimeout(() => {
+      Swiper.use([Navigation, Autoplay]);
       const swiper = new Swiper('.swiper-container', {
         direction: 'horizontal',
         slidesPerView: 'auto',
@@ -189,21 +251,32 @@ buscar() {
           prevEl: '.swiper-button-prev',
         },
         autoplay: {
-          delay: 3000,
+          delay: 3000, // Ajusta el intervalo de tiempo (en milisegundos) entre diapositivas
         },
       });
-
+  
       swiper.on('init', () => {
         console.log('Swiper initialized');
       });
-
+  
       swiper.on('slideChange', () => {
         console.log('Slide changed');
       });
-
+  
       swiper.on('click', () => {
         console.log('Navigation button clicked');
-      });
-},0);
+      });
+    }, 0);
+    
+}
+ionViewDidEnter() {
+  this.presentWelcomeModal();
+}
+async presentWelcomeModal() {
+  const modal = await this.modalController.create({
+    cssClass: 'welcome-modal', // Aquí puedes definir estilos para el modal
+    component: WelcomeModalPage, // Cambia "WelcomeModalPage" por el nombre de tu página modal
+  });
+  return await modal.present();
 }
 }

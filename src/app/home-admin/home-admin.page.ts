@@ -170,7 +170,8 @@ export class HomeAdminPage implements OnInit {
                 const toast = await this.toastController.create({
                   message: 'Producto eliminado correctamente',
                   duration: 2000,
-                  position: 'bottom'
+                  position: 'bottom',
+                  color: 'danger'
                 });
                 toast.present();
               } else {

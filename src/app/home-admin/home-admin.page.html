@@ -92,7 +92,10 @@
               >{{ producto.precio | currency }}</ion-card-subtitle
             >
           </ion-card-content>
-          <ion-row class="ion-align-items-center">
+          <ion-row >
+
+
+
             <ion-col size="6">
               <ion-button
                 class="Detalle"
@@ -102,12 +105,17 @@
                 Ver detalle
               </ion-button>
             </ion-col>
+
+
+
             <ion-col size="6">
               <ion-button  class="Detalle" expand="full" (click)="editarProducto(producto)">
                 <ion-icon name="create"></ion-icon>
                 Editar
               </ion-button>
             </ion-col>
+
+      
             <ion-col size="6">
               <ion-icon
                 class="Eliminar"
@@ -174,14 +182,16 @@
             <ion-card-content>
               <ion-card-title class="nombre-producto">{{ producto.nombre }}</ion-card-title>
               <ion-card-subtitle class="precio">{{ producto.precio | currency }}</ion-card-subtitle>
+
+
               <ion-label class="oferta-label" color="danger" *ngIf="producto.categoria === 'ofertas'"><strong>Oferta</strong></ion-label>
             </ion-card-content>
-            <ion-row class="ion-align-items-center">
+            <ion-row >
               <ion-col size="6">
                 <ion-button name="menu-outline" class="Detalle" (click)="mostrarDetalle(producto)" expand="full">Ver detalle</ion-button>
               </ion-col>
               <ion-col size="6">
-                <ion-button expand="full" (click)="editarProducto(producto)">
+                <ion-button expand="full" class="Detalle" (click)="editarProducto(producto)">
                   <ion-icon name="create"></ion-icon>
                   Editar
                 </ion-button>
